@@ -47,9 +47,9 @@ class HelloController extends AbstractController
 
     }
 
-    #[Route('/', name: 'user_profile', methods: ['GET'])]
-    public function userProfile(EntityManagerInterface $om, MicroPostRepository $repository): Response
-    {
+//    #[Route('/', name: 'user_profile', methods: ['GET'])]
+//    public function userProfile(EntityManagerInterface $om, MicroPostRepository $repository): Response
+//    {
 //        $post = $repository->find(10);
 //        dd($post);
 //        $post = new MicroPost();
@@ -79,14 +79,14 @@ class HelloController extends AbstractController
 //        $om->remove($profile);
 //        $om->flush();
 
-        return $this->render(
-            'hello/show_one.html.twig',
-            [
-                'message' => 's'
-            ]
-        );
-
-    }
+//        return $this->render(
+//            'hello/show_one.html.twig',
+//            [
+//                'message' => 's'
+//            ]
+//        );
+//
+//    }
 
 
 }

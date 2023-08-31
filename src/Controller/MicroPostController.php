@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\MicroPost;
+use App\Form\CommentType;
 use App\Form\MicroPostType;
+use App\Repository\CommentRepository;
 use App\Repository\MicroPostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,7 +33,7 @@ class MicroPostController extends AbstractController
 //        $microPostRepository->add($microPost, true);
 
         return $this->render('micro_post/index.html.twig', [
-            'posts' => $microPostRepository->findAll(),
+            'posts' => $microPostRepository->findAllWithComments(),
         ]);
     }
 
@@ -90,10 +92,40 @@ class MicroPostController extends AbstractController
 
         return $this->renderForm(
             'micro_post/edit.html.twig', [
-                'form' => $form
+                'form' => $form,
+                'post' =>$microPost
             ]
         );
     }
 
+    #[Route('/micro-post/{post}/comment', name: 'app_micro_post_comment')]
+    public function addComment(Request $request, CommentRepository $comments, MicroPost $post): Response
+    {
+        $form = $this->createForm(CommentType::class, new Comment());
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $comment = $form->getData();
+            $comment->setMicroPost($post);
+            $comments->add($comment);
+
+
+            $this->addFlash('success', 'Your Comment has been created!!.');
+
+            return $this->redirectToRoute(
+                'app_micro_post_show',
+                ['microPost' => $post->getId()]
+            );
+        }
+
+        return $this->renderForm(
+            'micro_post/comment.html.twig', [
+                'form' => $form,
+                'post' => $post
+            ]
+        );
+    }
 
 }
